@@ -1,0 +1,29 @@
+{
+  "name": "previousnext/skpr-config",
+  "description": "Reads skipper configuration files into environment variables.",
+  "type": "library",
+  "license": "GPL-2.0-or-later",
+  "require-dev": {
+    "phpunit/phpunit": "~6.5",
+    "squizlabs/php_codesniffer": "~3.2"
+  },
+  "config": {
+    "bin-dir": "bin",
+    "preferred-install": {
+      "*": "dist"
+    },
+    "sort-packages": true
+  },
+  "autoload": {
+    "psr-4": {
+      "PNX\\SkprConfig\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "PNX\\SkprConfig\\Tests\\": "tests/"
+    }
+  },
+  "require": {
+  }
+}
