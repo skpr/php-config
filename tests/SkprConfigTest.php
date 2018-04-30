@@ -13,9 +13,11 @@ class SkprConfigTest extends TestCase {
   /**
    * @covers ::create()
    * @covers ::load()
+   * @covers ::get()
    */
   public function testLoad() {
-    SkprConfig::create()->load(__DIR__ . '/fixtures');
+    $config = SkprConfig::create()->load(__DIR__ . '/fixtures');
+    $this->assertEquals('baz', $config->get('foo.bar'));
     $this->assertEquals('baz', getenv('FOO_BAR'));
   }
 
