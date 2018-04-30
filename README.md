@@ -15,7 +15,9 @@ $config->get('foo.bar')
 Skipper config variables will be converted to uppercase, and dots are
 converted to underscores. For example:
 
+```
 getenv('FOO_BAR')
+```
 
 ## Testing
 
