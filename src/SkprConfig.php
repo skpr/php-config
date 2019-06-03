@@ -76,12 +76,14 @@ class SkprConfig {
    *
    * @param string $key
    *   The key.
+   * @param mixed $default
+   *   Default value if the config value doesn't exist.
    *
    * @return string
    *   The value.
    */
-  public function get($key) {
-    return $this->config[$key];
+  public function get($key, $default = NULL) {
+    return $this->config[$key] ?? $default;
   }
 
   /**
