@@ -29,6 +29,7 @@ class SkprConfigTest extends TestCase {
       'FOO_BAR' => 'baz',
       'CHIP_SHOP' => 'snax',
     ], $config->getAll(TRUE));
+    $this->assertEquals([], SkprConfig::create()->load(__DIR__ . '/fixtures/baz')->getAll());
   }
 
 }

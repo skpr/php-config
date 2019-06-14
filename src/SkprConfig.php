@@ -12,7 +12,7 @@ class SkprConfig {
    *
    * @var string[]
    */
-  protected $config;
+  protected $config = [];
 
   /**
    * Factory method.
