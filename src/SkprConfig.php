@@ -112,4 +112,24 @@ class SkprConfig {
     return str_replace("\n", '', file_get_contents(realpath($filename)));
   }
 
+  /**
+   * Gets the list of variables.
+   *
+   * @param bool $environment_format
+   *   TRUE to return variables in uppercase format e.g s3.bucket would be
+   *   S3_BUCKET.
+   *
+   * @return array
+   *   Values.
+   */
+  public function getAll(bool $environment_format = FALSE): array {
+    $this->load();
+    if (!$environment_format) {
+      return $this->config;
+    }
+    return array_combine(array_map(function (string $name) {
+      return $this->convertToEnvVarName($name);
+    }, array_keys($this->config)), $this->config);
+  }
+
 }
