@@ -3,7 +3,7 @@
 namespace Skpr;
 
 /**
- * Utility for loading skipper config files into environment variables.
+ * Utility for loading skipper config files.
  */
 class SkprConfig {
 
@@ -46,9 +46,6 @@ class SkprConfig {
       ];
       foreach ($dirs as $dir) {
         $dir = $base_dir . '/' . $dir;
-        if (!is_readable($dir) || !is_dir($dir)) {
-          throw new InvalidConfigDirectoryException("$dir is not a valid config directory");
-        }
         // Here is an adventure into how PHP caches stat data on the filesystem.
         // Kubernetes ConfigMaps structure mounted configuration as follows:
         // /etc/skpr/var.foo -> /etc/skpr/..data/var.foo ->
