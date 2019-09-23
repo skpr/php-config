@@ -1,7 +1,7 @@
-# Skpr Config
+# PHP Config
 
 A simple utility for reading skpr config from a directory, and populating
-environment variables.
+environment variables in PHP applications.
 
 The default skpr config directory is /etc/skpr
 

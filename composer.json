@@ -1,8 +1,11 @@
 {
   "name": "previousnext/skpr-config",
-  "description": "Reads skipper configuration files into environment variables.",
+  "description": "Reads skipper configuration files.",
   "type": "library",
   "license": "GPL-2.0-or-later",
+  "require": {
+    "php": "^7.0"
+  },
   "require-dev": {
     "drupal/coder": "~8.2",
     "phpunit/phpunit": "~6.5"
@@ -16,15 +19,12 @@
   },
   "autoload": {
     "psr-4": {
-      "PNX\\SkprConfig\\": "src/"
+      "Skpr\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "PNX\\SkprConfig\\Tests\\": "tests/"
+      "Skpr\\Tests\\": "tests/"
     }
-  },
-  "require": {
-    "php": "~7.0"
   }
 }
