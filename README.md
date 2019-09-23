@@ -1,5 +1,7 @@
 # PHP Config
 
+[![CircleCI](https://circleci.com/gh/skpr/php-config.svg?style=svg)](https://circleci.com/gh/skpr/php-config)
+
 A simple utility for reading skpr config from a directory, and populating
 environment variables in PHP applications.
 

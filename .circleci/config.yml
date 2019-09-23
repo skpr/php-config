@@ -1,0 +1,14 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: previousnext/php-apache:7.3-3.x-dev
+    working_directory: /data
+    steps:
+      - checkout
+      - run: mkdir -p build/phpunit
+      - run: composer install --prefer-dist
+      - run: ./bin/phpcs
+      - run: ./bin/phpunit --log-junit build/phpunit
+      - store_test_results:
+          path: build/phpunit
