@@ -108,7 +108,7 @@ class SkprConfig {
    *   The env var key.
    */
   protected function convertToEnvVarName($filename) {
-    return strtoupper(str_replace('.', '_', $filename));
+    return strtoupper(preg_replace("/[^A-Za-z0-9 ]/", '_', $filename));
   }
 
   /**
