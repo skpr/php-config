@@ -9,6 +9,6 @@ jobs:
       - run: composer install --prefer-dist --no-progress --no-suggest --no-interaction --optimize-autoloader
       - run: ./bin/phpcs --colors --report=full
       - run: mkdir -p build/phpunit
-      - run: ./bin/phpunit --log-junit build/phpunit
+      - run: ./bin/phpunit --log-junit build/phpunit/results.xml
       - store_test_results:
           path: build
