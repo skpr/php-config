@@ -6,9 +6,17 @@ jobs:
     working_directory: /data
     steps:
       - checkout
-      - run: mkdir -p build/phpunit
+      - restore_cache:
+          keys:
+            - deps-{{ arch }}-{{ checksum "composer.lock" }}
       - run: composer install --prefer-dist --no-progress --no-suggest --no-interaction --optimize-autoloader
+      - save_cache:
+          key: deps-{{ arch }}-{{ checksum "composer.lock" }}
+          paths:
+            - bin
+            - vendor
       - run: ./bin/phpcs --colors --report=full
+      - run: mkdir -p build/phpunit
       - run: ./bin/phpunit --log-junit build/phpunit
       - store_test_results:
-          path: build/phpunit
+          path: build
