@@ -1,5 +1,5 @@
 {
-  "name": "previousnext/skpr-config",
+  "name": "skpr/config",
   "description": "Reads skipper configuration files.",
   "type": "library",
   "license": "GPL-2.0-or-later",
