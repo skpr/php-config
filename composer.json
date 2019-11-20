@@ -4,11 +4,12 @@
   "type": "library",
   "license": "GPL-2.0-or-later",
   "require": {
-    "php": "^7.0"
+    "php": "^7.1",
+    "ext-json": "*"
   },
   "require-dev": {
-    "drupal/coder": "~8.2",
-    "phpunit/phpunit": "~6.5"
+    "drupal/coder": "~8.3",
+    "phpunit/phpunit": "~7.5"
   },
   "config": {
     "bin-dir": "bin",
