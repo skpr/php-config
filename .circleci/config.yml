@@ -13,7 +13,7 @@ defaults: &defaults
   working_directory: /data
   steps:
     - checkout
-    - run: composer install --prefer-dist --no-progress --no-suggest --no-interaction --optimize-autoloader ${PREFER_LOWEST}
+    - run: composer update --prefer-dist --no-progress --no-suggest --no-interaction --optimize-autoloader ${PREFER_LOWEST}
     - run: ./bin/phpcs --colors --report=full
     - run: mkdir -p build/phpunit
     - run: ./bin/phpunit --log-junit build/phpunit/results.xml
