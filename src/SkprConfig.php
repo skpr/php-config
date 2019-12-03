@@ -10,7 +10,7 @@ class SkprConfig {
   /**
    * The default filename.
    */
-  const DEFAULT_FILENAME = '/etc/skpr/config.json';
+  const DEFAULT_FILENAME = '/etc/skpr/data/config.json';
 
   /**
    * A map of config.
