@@ -16,27 +16,34 @@ class SkprConfigTest extends TestCase {
    * @covers ::get()
    */
   public function testLoad() {
-    $base_dir = __DIR__ . '/fixtures';
-    $config = SkprConfig::create()->load($base_dir);
+    $config = SkprConfig::create()->load(__DIR__ . '/fixtures/config.json');
     $this->assertEquals('wiz', $config->get('foo.bar'));
     $this->assertEquals('wiz', getenv('FOO_BAR'));
     $this->assertEquals(NULL, $config->get('does.not.exist'));
     $this->assertEquals('but does have a default', $config->get('does.not.exist', 'but does have a default'));
     $this->assertEquals('squirrel', $config->get('somewhat.secret'));
     $this->assertEquals('sssh', $config->get('super.secret'));
+
+  }
+
+  /**
+   * @covers ::getAll
+   */
+  public function testGetAll() {
+    $filename = __DIR__ . '/fixtures/config.json';
     $this->assertEquals([
       'foo.bar' => 'wiz',
       'chip.shop' => 'snax',
       'somewhat.secret' => 'squirrel',
       'super.secret' => 'sssh',
-    ], $config->getAll(FALSE, $base_dir));
+    ], SkprConfig::create()->getAll(FALSE, $filename));
     $this->assertEquals([
       'FOO_BAR' => 'wiz',
       'CHIP_SHOP' => 'snax',
       'SOMEWHAT_SECRET' => 'squirrel',
       'SUPER_SECRET' => 'sssh',
-    ], $config->getAll(TRUE, $base_dir));
-    $this->assertEquals([], SkprConfig::create()->load(__DIR__ . '/fixtures/baz')->getAll());
+    ], SkprConfig::create()->getAll(TRUE, $filename));
+    $this->assertEquals([], SkprConfig::create()->getAll(__DIR__ . '/fixtures/does_not_exist'));
   }
 
 }
