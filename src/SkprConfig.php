@@ -41,10 +41,9 @@ class SkprConfig {
       return $this;
     }
     if (empty($this->config)) {
-      if (is_link($filename)) {
+      while (is_link($filename)) {
         clearstatcache(TRUE, $filename);
         $filename = dirname($filename) . '/' . readlink($filename);
-        clearstatcache(TRUE, $filename);
       }
       $this->config = json_decode(file_get_contents($filename), TRUE);
       array_walk($this->config, function ($value, $key) {

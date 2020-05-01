@@ -16,7 +16,7 @@ class SkprConfigTest extends TestCase {
    * @covers ::get()
    */
   public function testLoad() {
-    $config = SkprConfig::create()->load(__DIR__ . '/fixtures/config-link.json');
+    $config = SkprConfig::create()->load(__DIR__ . '/fixtures/config-link2.json');
     $this->assertEquals('wiz', $config->get('foo.bar'));
     $this->assertEquals('wiz', getenv('FOO_BAR'));
     $this->assertEquals(NULL, $config->get('does.not.exist'));
