@@ -41,7 +41,7 @@ class SkprConfig {
       return $this;
     }
     if (empty($this->config)) {
-      while (is_link($filename)) {
+      while (is_link($filename) || is_link(dirname($filename))) {
         clearstatcache(TRUE, $filename);
         $filename = dirname($filename) . '/' . readlink($filename);
       }
