@@ -40,12 +40,19 @@ class SkprConfig {
     if (!is_readable($filename) || !is_file($filename)) {
       return $this;
     }
+    // We cache the config in memory.
     if (empty($this->config)) {
-      while (is_link($filename) || is_link(dirname($filename))) {
-        clearstatcache(TRUE, $filename);
-        $filename = dirname($filename) . '/' . readlink($filename);
+      $data = file_get_contents($filename);
+      // If the data is not found, symlinks may be outdated.
+      if (!$data) {
+        // Follow symlinks and clear stat cache on each.
+        while (is_link($filename) || is_link(dirname($filename))) {
+          clearstatcache(TRUE, $filename);
+          $filename = dirname($filename) . '/' . readlink($filename);
+        }
+        $data = file_get_contents($filename);
       }
-      $this->config = json_decode(file_get_contents($filename), TRUE);
+      $this->config = json_decode($data, TRUE);
       array_walk($this->config, function ($value, $key) {
         // Store as env vars.
         putenv($this->convertToEnvVarName($key) . '=' . $value);
