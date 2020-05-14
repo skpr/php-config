@@ -15,7 +15,7 @@ class SkprConfig {
   /**
    * The default symlink.
    */
-  const DEFAULT_SYMLINK = '/etc/skpr/..data/config.json';
+  const DEFAULT_SYMLINK = '/etc/skpr/..data';
 
   /**
    * A map of config.
