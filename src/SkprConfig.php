@@ -13,9 +13,14 @@ class SkprConfig {
   const DEFAULT_FILENAME = '/etc/skpr/data/config.json';
 
   /**
-   * The default symlink.
+   * The default symlink directory.
    */
-  const DEFAULT_SYMLINK = '/etc/skpr/..data';
+  const DEFAULT_SYMLINK_DIR = '/etc/skpr/..data';
+
+  /**
+   * The default symlink file.
+   */
+  const DEFAULT_SYMLINK_FILE = '/etc/skpr/..data/config.json';
 
   /**
    * A map of config.
@@ -38,12 +43,10 @@ class SkprConfig {
    *
    * @param string $filename
    *   The config filename.
-   * @param string $symlink
-   *   The underlying symlink path.
    *
    * @return $this
    */
-  public function load(string $filename = self::DEFAULT_FILENAME, string $symlink = self::DEFAULT_SYMLINK): self {
+  public function load(string $filename = self::DEFAULT_FILENAME): self {
     if (!is_readable($filename) || !is_file($filename)) {
       return $this;
     }
@@ -55,10 +58,10 @@ class SkprConfig {
       if ($data === FALSE) {
         error_log("Clearing static cache for: " . $filename);
         clearstatcache(TRUE, $filename);
-        error_log("Clearing static cache for: " . $symlink);
-        clearstatcache(TRUE, $symlink);
-        error_log("Clearing static cache for: " . readlink($filename));
-        clearstatcache(TRUE, readlink($filename));
+        error_log("Clearing static cache for: " . self::DEFAULT_SYMLINK_DIR);
+        clearstatcache(TRUE, self::DEFAULT_SYMLINK_DIR);
+        error_log("Clearing static cache for: " . self::DEFAULT_SYMLINK_FILE);
+        clearstatcache(TRUE, self::DEFAULT_SYMLINK_FILE);
         $data = @file_get_contents(realpath($filename));
         if ($data === FALSE) {
           // Nothing more we can do at this point.
