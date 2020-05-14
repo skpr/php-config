@@ -56,12 +56,29 @@ class SkprConfig {
       $data = @file_get_contents(realpath($filename));
       // If the data is not found, symlinks may be outdated.
       if ($data === FALSE) {
-        error_log("Clearing static cache for: " . $filename);
-        clearstatcache(TRUE, $filename);
-        error_log("Clearing static cache for: " . self::DEFAULT_SYMLINK_DIR);
-        clearstatcache(TRUE, self::DEFAULT_SYMLINK_DIR);
-        error_log("Clearing static cache for: " . self::DEFAULT_SYMLINK_FILE);
-        clearstatcache(TRUE, self::DEFAULT_SYMLINK_FILE);
+        $dir = '/etc/skpr';
+        // Here is an adventure into how PHP caches stat data on the filesystem.
+        // Kubernetes ConfigMaps structure mounted configuration as follows:
+        // /etc/skpr/config.json ->
+        // /etc/skpr/..data/config.json ->
+        // /etc/skpr/..4984_21_04_13_51_28.237024315/config.json
+        //
+        // The issue is here is when values are updated there is a short TTL of
+        // time where PHP will keep looking at a non-existent timestamped
+        // directory.
+        //
+        // After looking into opcache and apc it turns out core php has a cache
+        // for this as well.
+        //
+        // These lines ensure that our Skipper configuration is always fresh and
+        // readily available for the remaining config lookups by the
+        // application.
+        foreach (realpath_cache_get() as $path => $cache) {
+          if (strpos($path, $dir) === 0) {
+            error_log("Clearing realpath cache for " . $path);
+            clearstatcache(TRUE, $path);
+          }
+        }
         $data = @file_get_contents(realpath($filename));
         if ($data === FALSE) {
           // Nothing more we can do at this point.
