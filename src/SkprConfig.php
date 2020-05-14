@@ -13,6 +13,17 @@ class SkprConfig {
   const DEFAULT_FILENAME = '/etc/skpr/data/config.json';
 
   /**
+   * The list of file paths that need a cache clear.
+   */
+  const FILE_PATHS = [
+    '/etc/skpr',
+    '/etc/skpr/data',
+    '/etc/skpr/data/..data',
+    '/etc/skpr/data/..data/config.json',
+    '/etc/skpr/data/config.json',
+  ];
+
+  /**
    * A map of config.
    *
    * @var string[]
@@ -32,7 +43,7 @@ class SkprConfig {
    * Load skpr config.
    *
    * @param string $filename
-   *   The config filename.
+   *   The config filename. Only used for testing.
    *
    * @return $this
    */
@@ -63,11 +74,9 @@ class SkprConfig {
         // These lines ensure that our Skipper configuration is always fresh and
         // readily available for the remaining config lookups by the
         // application.
-        foreach (realpath_cache_get() as $path => $cache) {
-          if (strpos($path, $dir) === 0) {
-            error_log("Clearing realpath cache for " . $path);
-            clearstatcache(TRUE, $path);
-          }
+        error_log("Clearing realpath caches.");
+        foreach (self::FILE_PATHS as $path) {
+          clearstatcache(TRUE, $path);
         }
         $data = @file_get_contents(realpath($filename));
         if ($data === FALSE) {
@@ -125,7 +134,10 @@ class SkprConfig {
    * @return array
    *   Values.
    */
-  public function getAll(bool $environment_format = FALSE, string $filename = self::DEFAULT_FILENAME): array {
+  public function getAll(
+    bool $environment_format = FALSE,
+    string $filename = self::DEFAULT_FILENAME
+  ): array {
     $this->load($filename);
     if (!$environment_format) {
       return $this->config;
