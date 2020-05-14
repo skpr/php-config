@@ -12,6 +12,8 @@ class SkprConfig {
    */
   const DEFAULT_FILENAME = '/etc/skpr/data/config.json';
 
+  const DEFAULT_SYMLINK = '/etc/skpr/..data/config.json';
+
   /**
    * A map of config.
    *
@@ -33,24 +35,25 @@ class SkprConfig {
    *
    * @param string $filename
    *   The config filename.
+   * @param string $symlink
+   *   The underlying symlink path.
    *
    * @return $this
    */
-  public function load(string $filename = self::DEFAULT_FILENAME): self {
+  public function load(string $filename = self::DEFAULT_FILENAME, string $symlink = self::DEFAULT_SYMLINK): self {
     if (!is_readable($filename) || !is_file($filename)) {
       return $this;
     }
     // We cache the config in memory.
     if (empty($this->config)) {
-      $data = file_get_contents($filename);
+      $data = @file_get_contents($filename);
       // If the data is not found, symlinks may be outdated.
-      if (!$data) {
-        // Follow symlinks and clear stat cache on each.
-        while (is_link($filename) || is_link(dirname($filename))) {
-          clearstatcache(TRUE, $filename);
-          $filename = dirname($filename) . '/' . readlink($filename);
-        }
-        $data = file_get_contents($filename);
+      if ($data === FALSE) {
+        clearstatcache(TRUE, $symlink);
+        clearstatcache(TRUE, $filename);
+        $data = @file_get_contents($filename);
+        error_log("Failed to log skpr configuration.");
+        return $this;
       }
       $this->config = json_decode($data, TRUE);
       array_walk($this->config, function ($value, $key) {
