@@ -72,7 +72,7 @@ class SkprConfig {
         // These lines ensure that our Skipper configuration is always fresh and
         // readily available for the remaining config lookups by the
         // application.
-        error_log("Failed loading Skpr config from: " . realpath($filename) . ' Clearing realpath caches.');
+        error_log("Failed loading Skpr config from: " . realpath($filename) . '. Clearing realpath caches.');
         foreach (self::FILE_PATHS as $path) {
           clearstatcache(TRUE, $path);
         }
@@ -133,10 +133,7 @@ class SkprConfig {
    * @return array
    *   Values.
    */
-  public function getAll(
-    bool $environment_format = FALSE,
-    string $filename = self::DEFAULT_FILENAME
-  ): array {
+  public function getAll(bool $environment_format = FALSE, string $filename = self::DEFAULT_FILENAME): array {
     $this->load($filename);
     if (!$environment_format) {
       return $this->config;
