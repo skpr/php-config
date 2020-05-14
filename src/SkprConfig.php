@@ -13,16 +13,6 @@ class SkprConfig {
   const DEFAULT_FILENAME = '/etc/skpr/data/config.json';
 
   /**
-   * The default symlink directory.
-   */
-  const DEFAULT_SYMLINK_DIR = '/etc/skpr/..data';
-
-  /**
-   * The default symlink file.
-   */
-  const DEFAULT_SYMLINK_FILE = '/etc/skpr/..data/config.json';
-
-  /**
    * A map of config.
    *
    * @var string[]
