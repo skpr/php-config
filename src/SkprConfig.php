@@ -53,11 +53,9 @@ class SkprConfig {
     }
     // We cache the config in memory.
     if (empty($this->config)) {
-      error_log("Loading Skpr config from: " . realpath($filename));
       $data = @file_get_contents(realpath($filename));
       // If the data is not found, symlinks may be outdated.
       if ($data === FALSE) {
-        $dir = '/etc/skpr';
         // Here is an adventure into how PHP caches stat data on the filesystem.
         // Kubernetes ConfigMaps structure mounted configuration as follows:
         // /etc/skpr/config.json ->
@@ -74,7 +72,7 @@ class SkprConfig {
         // These lines ensure that our Skipper configuration is always fresh and
         // readily available for the remaining config lookups by the
         // application.
-        error_log("Clearing realpath caches.");
+        error_log("Failed loading Skpr config from: " . realpath($filename) . ' Clearing realpath caches.');
         foreach (self::FILE_PATHS as $path) {
           clearstatcache(TRUE, $path);
         }
@@ -84,6 +82,7 @@ class SkprConfig {
           error_log("Failed to load skpr configuration from: " . realpath($filename));
           return $this;
         }
+        error_log("Successfully loaded Skpr config from: " . realpath($filename));
       }
       $this->config = json_decode($data, TRUE);
       array_walk($this->config, function ($value, $key) {
