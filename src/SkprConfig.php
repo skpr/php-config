@@ -49,15 +49,20 @@ class SkprConfig {
     }
     // We cache the config in memory.
     if (empty($this->config)) {
+      error_log("Loading Skpr config from: " . realpath($filename));
       $data = @file_get_contents(realpath($filename));
       // If the data is not found, symlinks may be outdated.
       if ($data === FALSE) {
-        clearstatcache(TRUE, $symlink);
+        error_log("Clearing static cache for: " . $filename);
         clearstatcache(TRUE, $filename);
+        error_log("Clearing static cache for: " . $symlink);
+        clearstatcache(TRUE, $symlink);
+        error_log("Clearing static cache for: " . readlink($filename));
+        clearstatcache(TRUE, readlink($filename));
         $data = @file_get_contents(realpath($filename));
         if ($data === FALSE) {
           // Nothing more we can do at this point.
-          error_log("Failed to load skpr configuration.");
+          error_log("Failed to load skpr configuration from: " . realpath($filename));
           return $this;
         }
       }
