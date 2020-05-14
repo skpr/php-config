@@ -13,6 +13,17 @@ class SkprConfig {
   const DEFAULT_FILENAME = '/etc/skpr/data/config.json';
 
   /**
+   * The list of file paths that need a cache clear.
+   */
+  const FILE_PATHS = [
+    '/etc/skpr',
+    '/etc/skpr/data',
+    '/etc/skpr/data/..data',
+    '/etc/skpr/data/..data/config.json',
+    '/etc/skpr/data/config.json',
+  ];
+
+  /**
    * A map of config.
    *
    * @var string[]
@@ -32,7 +43,7 @@ class SkprConfig {
    * Load skpr config.
    *
    * @param string $filename
-   *   The config filename.
+   *   The config filename. Only used for testing.
    *
    * @return $this
    */
@@ -40,9 +51,40 @@ class SkprConfig {
     if (!is_readable($filename) || !is_file($filename)) {
       return $this;
     }
+    // We cache the config in memory.
     if (empty($this->config)) {
-      clearstatcache(TRUE, $filename);
-      $this->config = json_decode(file_get_contents($filename), TRUE);
+      $data = @file_get_contents(realpath($filename));
+      // If the data is not found, symlinks may be outdated.
+      if ($data === FALSE) {
+        // Here is an adventure into how PHP caches stat data on the filesystem.
+        // Kubernetes ConfigMaps structure mounted configuration as follows:
+        // /etc/skpr/config.json ->
+        // /etc/skpr/..data/config.json ->
+        // /etc/skpr/..4984_21_04_13_51_28.237024315/config.json
+        //
+        // The issue is here is when values are updated there is a short TTL of
+        // time where PHP will keep looking at a non-existent timestamped
+        // directory.
+        //
+        // After looking into opcache and apc it turns out core php has a cache
+        // for this as well.
+        //
+        // These lines ensure that our Skipper configuration is always fresh and
+        // readily available for the remaining config lookups by the
+        // application.
+        error_log("Failed loading Skpr config from: " . realpath($filename) . '. Clearing realpath caches.');
+        foreach (self::FILE_PATHS as $path) {
+          clearstatcache(TRUE, $path);
+        }
+        $data = @file_get_contents(realpath($filename));
+        if ($data === FALSE) {
+          // Nothing more we can do at this point.
+          error_log("Failed to load skpr configuration from: " . realpath($filename));
+          return $this;
+        }
+        error_log("Successfully loaded Skpr config from: " . realpath($filename));
+      }
+      $this->config = json_decode($data, TRUE);
       array_walk($this->config, function ($value, $key) {
         // Store as env vars.
         putenv($this->convertToEnvVarName($key) . '=' . $value);
