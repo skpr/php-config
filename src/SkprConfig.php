@@ -12,6 +12,9 @@ class SkprConfig {
    */
   const DEFAULT_FILENAME = '/etc/skpr/data/config.json';
 
+  /**
+   * The default symlink.
+   */
   const DEFAULT_SYMLINK = '/etc/skpr/..data/config.json';
 
   /**
@@ -52,8 +55,11 @@ class SkprConfig {
         clearstatcache(TRUE, $symlink);
         clearstatcache(TRUE, $filename);
         $data = @file_get_contents($filename);
-        error_log("Failed to log skpr configuration.");
-        return $this;
+        if ($data === FALSE) {
+          // Nothing more we can do at this point.
+          error_log("Failed to log skpr configuration.");
+          return $this;
+        }
       }
       $this->config = json_decode($data, TRUE);
       array_walk($this->config, function ($value, $key) {
