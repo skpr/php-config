@@ -72,9 +72,6 @@ class SkprConfig {
    * @return $this
    */
   public function load(string $filename = self::CONFIG_FILENAME): self {
-    if (!is_readable($filename) || !is_file($filename)) {
-      return $this;
-    }
     // We cache the config in memory.
     if (empty($this->config)) {
       $data = $this->loadFreshData($filename);
@@ -100,18 +97,7 @@ class SkprConfig {
    *   The host names.
    */
   public function hostNames(string $filename = self::HOSTNAMES_FILE): array {
-    if (!is_readable($filename) || !is_file($filename)) {
-      return [];
-    }
-    // We cache the IP ranges in memory.
-    if (empty($this->hostNames)) {
-      $data = $this->loadFreshData($filename);
-      if ($data === FALSE) {
-        return [];
-      }
-      $this->hostNames = json_decode($data, TRUE);
-    }
-    return $this->hostNames;
+    return $this->readFile($filename, "hostNames");
   }
 
   /**
@@ -124,18 +110,29 @@ class SkprConfig {
    *   The IP ranges.
    */
   public function ipRanges(string $filename = self::IP_RANGES_FILENAME): array {
-    if (!is_readable($filename) || !is_file($filename)) {
-      return [];
-    }
-    // We cache the IP ranges in memory.
-    if (empty($this->ipRanges)) {
+    return $this->readFile($filename, "ipRanges");
+  }
+
+  /**
+   * Reads the file and caches it in the given property.
+   *
+   * @param string $filename
+   *   The filename.
+   * @param string $property
+   *   The property.
+   *
+   * @return string[]
+   *   The data.
+   */
+  protected function readFile(string $filename, string $property): array {
+    if (empty($this->{$property})) {
       $data = $this->loadFreshData($filename);
       if ($data === FALSE) {
         return [];
       }
-      $this->ipRanges = json_decode($data, TRUE);
+      $this->{$property} = json_decode($data, TRUE);
     }
-    return $this->ipRanges;
+    return $this->{$property};
   }
 
   /**
@@ -165,6 +162,9 @@ class SkprConfig {
    *   The file data, or false if not found.
    */
   protected function loadFreshData(string $filename) {
+    if (!is_readable($filename) || !is_file($filename)) {
+      return FALSE;
+    }
     $data = @file_get_contents(realpath($filename));
     // If the data is not found, symlinks may be outdated.
     if ($data === FALSE) {
