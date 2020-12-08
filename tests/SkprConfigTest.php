@@ -45,4 +45,26 @@ class SkprConfigTest extends TestCase {
     $this->assertEquals([], SkprConfig::create()->getAll(__DIR__ . '/fixtures/does_not_exist'));
   }
 
+  /**
+   * @covers ::ipRanges
+   */
+  public function testIpRanges() {
+    $filename = __DIR__ . '/fixtures/ip-ranges.json';
+    $skpr = SkprConfig::create();
+    $ipRanges = $skpr->ipRanges($filename);
+    $this->assertCount(119, $ipRanges);
+    $this->assertContains("99.79.169.0/24", $ipRanges);
+  }
+
+  /**
+   * @covers ::hostNames
+   */
+  public function testHostNames() {
+    $filename = __DIR__ . '/fixtures/hostnames.json';
+    $skpr = SkprConfig::create();
+    $hostNames = $skpr->hostNames($filename);
+    $this->assertCount(2, $hostNames);
+    $this->assertContains("foo.bar", $hostNames);
+  }
+
 }
