@@ -223,10 +223,7 @@ class SkprConfig {
    * @return array
    *   Values.
    */
-  public function getAll(
-    bool $environment_format = FALSE,
-    string $filename = self::CONFIG_FILENAME
-  ): array {
+  public function getAll(bool $environment_format = FALSE, string $filename = self::CONFIG_FILENAME): array {
     $this->load($filename);
     if (!$environment_format) {
       return $this->config;
