@@ -8,9 +8,19 @@ namespace Skpr;
 class SkprConfig {
 
   /**
-   * The default filename.
+   * The config filename.
    */
-  const DEFAULT_FILENAME = '/etc/skpr/data/config.json';
+  const CONFIG_FILENAME = '/etc/skpr/data/config.json';
+
+  /**
+   * The IP ranges filename.
+   */
+  const IP_RANGES_FILENAME = '/etc/skpr/data/ip-ranges.json';
+
+  /**
+   * The hostnames filename.
+   */
+  const HOSTNAMES_FILE = '/etc/skpr/data/hostnames.json';
 
   /**
    * The list of file paths that need a cache clear.
@@ -31,6 +41,20 @@ class SkprConfig {
   protected $config = [];
 
   /**
+   * The list of IP ranges.
+   *
+   * @var string[]
+   */
+  protected $ipRanges = [];
+
+  /**
+   * The list of hostnames.
+   *
+   * @var string[]
+   */
+  protected $hostNames = [];
+
+  /**
    * Factory method.
    *
    * @return $this
@@ -40,49 +64,19 @@ class SkprConfig {
   }
 
   /**
-   * Load skpr config.
+   * Loads the skpr config.
    *
    * @param string $filename
    *   The config filename. Only used for testing.
    *
    * @return $this
    */
-  public function load(string $filename = self::DEFAULT_FILENAME): self {
-    if (!is_readable($filename) || !is_file($filename)) {
-      return $this;
-    }
+  public function load(string $filename = self::CONFIG_FILENAME): self {
     // We cache the config in memory.
     if (empty($this->config)) {
-      $data = @file_get_contents(realpath($filename));
-      // If the data is not found, symlinks may be outdated.
+      $data = $this->loadFreshData($filename);
       if ($data === FALSE) {
-        // Here is an adventure into how PHP caches stat data on the filesystem.
-        // Kubernetes ConfigMaps structure mounted configuration as follows:
-        // /etc/skpr/config.json ->
-        // /etc/skpr/..data/config.json ->
-        // /etc/skpr/..4984_21_04_13_51_28.237024315/config.json
-        //
-        // The issue is here is when values are updated there is a short TTL of
-        // time where PHP will keep looking at a non-existent timestamped
-        // directory.
-        //
-        // After looking into opcache and apc it turns out core php has a cache
-        // for this as well.
-        //
-        // These lines ensure that our Skipper configuration is always fresh and
-        // readily available for the remaining config lookups by the
-        // application.
-        error_log("Failed loading Skpr config from: " . realpath($filename) . '. Clearing realpath caches.');
-        foreach (self::FILE_PATHS as $path) {
-          clearstatcache(TRUE, $path);
-        }
-        $data = @file_get_contents(realpath($filename));
-        if ($data === FALSE) {
-          // Nothing more we can do at this point.
-          error_log("Failed to load skpr configuration from: " . realpath($filename));
-          return $this;
-        }
-        error_log("Successfully loaded Skpr config from: " . realpath($filename));
+        return $this;
       }
       $this->config = json_decode($data, TRUE);
       array_walk($this->config, function ($value, $key) {
@@ -91,6 +85,102 @@ class SkprConfig {
       });
     }
     return $this;
+  }
+
+  /**
+   * Gets the hostnames for the current environment.
+   *
+   * @param string $filename
+   *   The filename used for testing.
+   *
+   * @return string[]
+   *   The host names.
+   */
+  public function hostNames(string $filename = self::HOSTNAMES_FILE): array {
+    return $this->readFile($filename, "hostNames");
+  }
+
+  /**
+   * Gets a list of trusted IP Ranges used for reverse proxies.
+   *
+   * @param string $filename
+   *   The filename used for testing.
+   *
+   * @return string[]
+   *   The IP ranges.
+   */
+  public function ipRanges(string $filename = self::IP_RANGES_FILENAME): array {
+    return $this->readFile($filename, "ipRanges");
+  }
+
+  /**
+   * Reads the file and caches it in the given property.
+   *
+   * @param string $filename
+   *   The filename.
+   * @param string $property
+   *   The property.
+   *
+   * @return string[]
+   *   The data.
+   */
+  protected function readFile(string $filename, string $property): array {
+    if (empty($this->{$property})) {
+      $data = $this->loadFreshData($filename);
+      if ($data === FALSE) {
+        return [];
+      }
+      $this->{$property} = json_decode($data, TRUE);
+    }
+    return $this->{$property};
+  }
+
+  /**
+   * Loads fresh data.
+   *
+   * Here is an adventure into how PHP caches stat data on the filesystem.
+   * Kubernetes ConfigMaps structure mounted configuration as follows:
+   * /etc/skpr/config.json ->
+   * /etc/skpr/..data/config.json ->
+   * /etc/skpr/..4984_21_04_13_51_28.237024315/config.json.
+   *
+   * The issue is here is when values are updated there is a short TTL of
+   * time where PHP will keep looking at a non-existent timestamped
+   * directory.
+   *
+   * After looking into opcache and apc it turns out core php has a cache
+   * for this as well.
+   *
+   * These lines ensure that our Skipper configuration is always fresh and
+   * readily available for the remaining config lookups by the
+   * application.
+   *
+   * @param string $filename
+   *   The file name.
+   *
+   * @return string|false
+   *   The file data, or false if not found.
+   */
+  protected function loadFreshData(string $filename) {
+    if (!is_readable($filename) || !is_file($filename)) {
+      return FALSE;
+    }
+    $data = @file_get_contents(realpath($filename));
+    // If the data is not found, symlinks may be outdated.
+    if ($data === FALSE) {
+      error_log("Failed loading Skpr config from: " . realpath($filename) . '. Clearing realpath caches.');
+      foreach (self::FILE_PATHS as $path) {
+        clearstatcache(TRUE, $path);
+      }
+      $data = @file_get_contents(realpath($filename));
+      if ($data === FALSE) {
+        // Nothing more we can do at this point.
+        error_log("Failed to load skpr configuration from: " . realpath($filename));
+        return $data;
+      }
+      error_log("Successfully loaded Skpr config from: " . realpath($filename));
+    }
+    return $data;
   }
 
   /**
@@ -133,7 +223,7 @@ class SkprConfig {
    * @return array
    *   Values.
    */
-  public function getAll(bool $environment_format = FALSE, string $filename = self::DEFAULT_FILENAME): array {
+  public function getAll(bool $environment_format = FALSE, string $filename = self::CONFIG_FILENAME): array {
     $this->load($filename);
     if (!$environment_format) {
       return $this->config;
