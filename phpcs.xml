@@ -2,7 +2,6 @@
 <ruleset name="pnx-project">
     <description>PHP Codesniffer configuration.</description>
     <file>./src</file>
-    <file>./tests</file>
     <exclude-pattern>./tests/bootstrap.php</exclude-pattern>
     <arg name="extensions" value="php"/>
     <arg name="report" value="full"/>
