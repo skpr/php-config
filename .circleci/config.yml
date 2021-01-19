@@ -1,34 +1,36 @@
-version: 2
+version: 2.1
+
+executors:
+  php74:
+    docker:
+      - image: skpr/php-cli:7.4-1.x
+  php80:
+    docker:
+      - image: skpr/php-cli:8.0-1.x
 
 workflows:
-  version: 2
   build:
     jobs:
-      - build_lowest
-      - build_highest
-
-defaults: &defaults
-  docker:
-    - image: skpr/php-cli:7.3-1.x
-  working_directory: /data
-  steps:
-    - checkout
-    - run: composer update --prefer-dist --no-progress --no-suggest --no-interaction --optimize-autoloader ${PREFER_LOWEST}
-    - run: ./bin/phpcs --colors --report=full
-    - run: mkdir -p build/phpunit
-    - run: ./bin/phpunit --log-junit build/phpunit/results.xml
-    - store_test_results:
-        path: build
+      - build:
+          matrix:
+            parameters:
+              php: ["php74", "php80"]
+              composer-opts: ["", "--prefer-lowest"]
 
 jobs:
-  build_lowest:
-    <<: *defaults
-    docker:
-      - image: skpr/php-cli:7.3-1.x
-    environment:
-      - PREFER_LOWEST: --prefer-lowest
-  build_highest:
-    <<: *defaults
-    environment:
-      - PREFER_LOWEST: ''
-
+  build:
+    parameters:
+      php:
+        type: executor
+      composer-opts:
+        type: string
+    executor: << parameters.php >>
+    working_directory: /data
+    steps:
+      - checkout
+      - run: composer2 update --prefer-dist --no-progress --no-suggest --no-interaction --optimize-autoloader << parameters.composer-opts >>
+      - run: ./bin/phpcs --colors --report=full
+      - run: mkdir -p build/phpunit
+      - run: ./bin/phpunit --log-junit build/phpunit/results.xml
+      - store_test_results:
+          path: build

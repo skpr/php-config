@@ -4,7 +4,7 @@
   "type": "library",
   "license": "GPL-2.0-or-later",
   "require": {
-    "php": "^7.2",
+    "php": "^7.2||^8.0",
     "ext-json": "*"
   },
   "require-dev": {
