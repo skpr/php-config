@@ -8,8 +8,8 @@
     "ext-json": "*"
   },
   "require-dev": {
-    "drupal/coder": "~8.3.11",
-    "phpunit/phpunit": "~8.5.13"
+    "drupal/coder": "~8.3.12",
+    "phpunit/phpunit": "~8.5.14"
   },
   "config": {
     "bin-dir": "bin",
