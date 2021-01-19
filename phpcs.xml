@@ -7,5 +7,6 @@
     <arg name="report" value="full"/>
     <arg name="colors"/>
     <arg value="sp"/>
-    <rule ref="./vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml"/>
+    <rule ref="Drupal"/>
+    <rule ref="PHPCompatibility"/>
 </ruleset>
