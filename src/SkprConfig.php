@@ -5,7 +5,7 @@ namespace Skpr;
 /**
  * Utility for loading skipper config files.
  */
-class SkprConfig implements \Countable {
+class SkprConfig {
 
   /**
    * The config filename.
@@ -94,7 +94,7 @@ class SkprConfig implements \Countable {
     array_walk($this->config, function ($value, $key) use ($include) {
       // Store as env vars.
       if (empty($include) || in_array($key, $include, TRUE)) {
-        $this->putenv($key, $value);
+        $this->putenv($key);
       }
     });
   }
@@ -104,11 +104,9 @@ class SkprConfig implements \Countable {
    *
    * @param string $key
    *   The config key.
-   * @param string $value
-   *   The config value.
    */
-  public function putEnv($key, $value) {
-    putenv($this->convertToEnvVarName($key) . '=' . $value);
+  public function putEnv($key) {
+    putenv($this->convertToEnvVarName($key) . '=' . $this->get($key));
   }
 
   /**
@@ -255,13 +253,6 @@ class SkprConfig implements \Countable {
     return array_combine(array_map(function (string $name) {
       return $this->convertToEnvVarName($name);
     }, array_keys($this->config)), $this->config);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function count(): int {
-    return count($this->config);
   }
 
 }
