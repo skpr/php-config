@@ -79,12 +79,40 @@ class SkprConfig {
         return $this;
       }
       $this->config = json_decode($data, TRUE);
-      array_walk($this->config, function ($value, $key) {
-        // Store as env vars.
-        putenv($this->convertToEnvVarName($key) . '=' . $value);
-      });
     }
     return $this;
+  }
+
+  /**
+   * Puts the list of Skpr config into env vars.
+   *
+   * @param string[] $keys
+   *   The list of config keys to include. An empty array will
+   *   include all keys.
+   */
+  public function putEnvs(array $keys) {
+    foreach ($keys as $key) {
+      $this->putenv($key);
+    }
+  }
+
+  /**
+   * Puts all Skpr config into env vars.
+   */
+  public function putAllEnvs() {
+    foreach ($this->config as $key => $value) {
+      $this->putenv($key);
+    };
+  }
+
+  /**
+   * Puts a Skpr config into an env var.
+   *
+   * @param string $key
+   *   The config key.
+   */
+  public function putEnv($key) {
+    putenv($this->convertToEnvVarName($key) . '=' . $this->get($key));
   }
 
   /**
