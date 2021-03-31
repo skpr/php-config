@@ -84,19 +84,25 @@ class SkprConfig {
   }
 
   /**
-   * Puts all Skpr config into env vars.
+   * Puts the list of Skpr config into env vars.
    *
-   * @param string[] $include
-   *   (optional) The list of config keys to include. An empty array will
+   * @param string[] $keys
+   *   The list of config keys to include. An empty array will
    *   include all keys.
    */
-  public function putEnvs(array $include = []) {
-    array_walk($this->config, function ($value, $key) use ($include) {
-      // Store as env vars.
-      if (empty($include) || in_array($key, $include, TRUE)) {
-        $this->putenv($key);
-      }
-    });
+  public function putEnvs(array $keys) {
+    foreach ($keys as $key) {
+      $this->putenv($key);
+    }
+  }
+
+  /**
+   * Puts all Skpr config into env vars.
+   */
+  public function putAllEnvs() {
+    foreach ($this->config as $key => $value) {
+      $this->putenv($key);
+    };
   }
 
   /**
