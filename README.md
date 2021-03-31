@@ -9,16 +9,35 @@ The default skpr config directory is /etc/skpr
 
 ## Usage
 
-```
+### Loading config
+
+```php
 $config = SkprConfig::create()->load();
-$config->get('foo.bar')
+$config->get('foo.bar');
 ```
 
-Skipper config variables will be converted to uppercase, and dots are
+### Setting environment variables
+
+You can optionally set environment variables from Skpr config.
+
+```php
+$config = SkprConfig::create()->load();
+$config->putEnvs();
+```
+
+Keys will be converted to uppercase, and dots are
 converted to underscores. For example:
 
 ```
 getenv('FOO_BAR')
+```
+
+You can also provide an include list of config keys, to avoid adding all config as environment
+variables:
+
+```php
+$config = SkprConfig::create()->load();
+$config->putEnvs(['my.key']);
 ```
 
 ## Testing

@@ -36,6 +36,27 @@ class SkprConfigTest extends TestCase {
   }
 
   /**
+   * @covers ::create
+   * @covers ::load
+   * @covers ::putEnvs
+   */
+  public function testPutEnvsFiltered() {
+    // Clear env vars.
+    putenv('FOO_BAR');
+    putenv('SOMEWHAT_SECRET');
+    putenv('CHIP_SHOP');
+    putenv('SUPER_SECRET');
+
+    $config = SkprConfig::create()->load(__DIR__ . '/../fixtures/config-link2.json');
+    $config->putEnvs(['foo.bar', 'somewhat.secret']);
+
+    $this->assertEquals('wiz', getenv('FOO_BAR'));
+    $this->assertEquals('squirrel', getenv('SOMEWHAT_SECRET'));
+    $this->assertFalse(getenv('CHIP_SHOP'));
+    $this->assertFalse(getenv('SUPER_SECRET'));
+  }
+
+  /**
    * @covers ::getAll
    */
   public function testGetAll() {
