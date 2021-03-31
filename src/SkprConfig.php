@@ -79,12 +79,18 @@ class SkprConfig {
         return $this;
       }
       $this->config = json_decode($data, TRUE);
-      array_walk($this->config, function ($value, $key) {
-        // Store as env vars.
-        putenv($this->convertToEnvVarName($key) . '=' . $value);
-      });
     }
     return $this;
+  }
+
+  /**
+   * Puts all Skpr config into env vars.
+   */
+  public function putEnvs() {
+    array_walk($this->config, function ($value, $key) {
+      // Store as env vars.
+      putenv($this->convertToEnvVarName($key) . '=' . $value);
+    });
   }
 
   /**

@@ -18,11 +18,21 @@ class SkprConfigTest extends TestCase {
   public function testLoad() {
     $config = SkprConfig::create()->load(__DIR__ . '/../fixtures/config-link2.json');
     $this->assertEquals('wiz', $config->get('foo.bar'));
-    $this->assertEquals('wiz', getenv('FOO_BAR'));
     $this->assertEquals(NULL, $config->get('does.not.exist'));
     $this->assertEquals('but does have a default', $config->get('does.not.exist', 'but does have a default'));
     $this->assertEquals('squirrel', $config->get('somewhat.secret'));
     $this->assertEquals('sssh', $config->get('super.secret'));
+  }
+
+  /**
+   * @covers ::create
+   * @covers ::load
+   * @covers ::putEnvs
+   */
+  public function testPutEnvs() {
+    $config = SkprConfig::create()->load(__DIR__ . '/../fixtures/config-link2.json');
+    $config->putEnvs();
+    $this->assertEquals('wiz', getenv('FOO_BAR'));
   }
 
   /**
