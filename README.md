@@ -22,7 +22,7 @@ You can optionally set environment variables from Skpr config.
 
 ```php
 $config = SkprConfig::create()->load();
-$config->putEnvs();
+$config->putAllEnvs();
 ```
 
 Keys will be converted to uppercase, and dots are
@@ -32,12 +32,12 @@ converted to underscores. For example:
 getenv('FOO_BAR')
 ```
 
-You can also provide an include list of config keys, to avoid adding all config as environment
+You can also provide a list of config keys, to avoid adding all config as environment
 variables:
 
 ```php
 $config = SkprConfig::create()->load();
-$config->putEnvs(['my.key']);
+$config->putEnvs(['my.key1', 'my.key2']);
 ```
 
 ## Testing
