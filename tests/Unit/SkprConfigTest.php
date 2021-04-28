@@ -22,6 +22,7 @@ class SkprConfigTest extends TestCase {
     $this->assertEquals('but does have a default', $config->get('does.not.exist', 'but does have a default'));
     $this->assertEquals('squirrel', $config->get('somewhat.secret'));
     $this->assertEquals('sssh', $config->get('super.secret'));
+    $this->assertEquals('\value', $config->get('super.value'));
   }
 
   /**
@@ -46,6 +47,7 @@ class SkprConfigTest extends TestCase {
     putenv('SOMEWHAT_SECRET');
     putenv('CHIP_SHOP');
     putenv('SUPER_SECRET');
+    putenv('SUPER_VALUE');
 
     $config = SkprConfig::create()->load(__DIR__ . '/../fixtures/config-link2.json');
     $config->putEnvs(['foo.bar', 'somewhat.secret']);
@@ -54,6 +56,7 @@ class SkprConfigTest extends TestCase {
     $this->assertEquals('squirrel', getenv('SOMEWHAT_SECRET'));
     $this->assertFalse(getenv('CHIP_SHOP'));
     $this->assertFalse(getenv('SUPER_SECRET'));
+    $this->assertFalse(getenv('SUPER_VALUE'));
   }
 
   /**
@@ -66,12 +69,14 @@ class SkprConfigTest extends TestCase {
       'chip.shop' => 'snax',
       'somewhat.secret' => 'squirrel',
       'super.secret' => 'sssh',
+      'super.value' => '\value',
     ], SkprConfig::create()->getAll(FALSE, $filename));
     $this->assertEquals([
       'FOO_BAR' => 'wiz',
       'CHIP_SHOP' => 'snax',
       'SOMEWHAT_SECRET' => 'squirrel',
       'SUPER_SECRET' => 'sssh',
+      'SUPER_VALUE' => '\value',
     ], SkprConfig::create()->getAll(TRUE, $filename));
     $this->assertEquals([], SkprConfig::create()->getAll(__DIR__ . '/../fixtures/does_not_exist'));
   }
