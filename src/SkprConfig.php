@@ -30,7 +30,11 @@ class SkprConfig {
     '/etc/skpr/data',
     '/etc/skpr/data/..data',
     '/etc/skpr/data/..data/config.json',
-    '/etc/skpr/data/config.json',
+    self::CONFIG_FILENAME,
+    '/etc/skpr/data/..data/hostnames.json',
+    self::HOSTNAMES_FILE,
+    '/etc/skpr/data/..data/ip-ranges.json',
+    self::IP_RANGES_FILENAME,
   ];
 
   /**
