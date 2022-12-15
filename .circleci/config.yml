@@ -3,10 +3,13 @@ version: 2.1
 executors:
   php74:
     docker:
-      - image: skpr/php-cli:7.4-1.x
+      - image: skpr/php-cli:7.4-dev-v2-latest
   php80:
     docker:
-      - image: skpr/php-cli:8.0-1.x
+      - image: skpr/php-cli:8.0-dev-v2-latest
+  php81:
+    docker:
+      - image: skpr/php-cli:8.1-dev-v2-latest1
 
 workflows:
   build:
@@ -14,7 +17,7 @@ workflows:
       - build:
           matrix:
             parameters:
-              php: ["php74", "php80"]
+              php: ["php74", "php80", "php81"]
               composer-opts: ["", "--prefer-lowest"]
 
 jobs:
