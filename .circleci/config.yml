@@ -9,7 +9,7 @@ executors:
       - image: skpr/php-cli:8.0-dev-v2-latest
   php81:
     docker:
-      - image: skpr/php-cli:8.1-dev-v2-latest1
+      - image: skpr/php-cli:8.1-dev-v2-latest
 
 workflows:
   build:
