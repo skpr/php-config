@@ -2,5 +2,6 @@
   "chip.shop": "snax",
   "foo.bar": "wiz",
   "somewhat.secret": "squirrel",
-  "super.secret": "sssh"
+  "super.secret": "sssh",
+  "false.boolean": "0"
 }

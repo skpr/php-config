@@ -22,6 +22,8 @@ class SkprConfigTest extends TestCase {
     $this->assertEquals('but does have a default', $config->get('does.not.exist', 'but does have a default'));
     $this->assertEquals('squirrel', $config->get('somewhat.secret'));
     $this->assertEquals('sssh', $config->get('super.secret'));
+    $this->assertEquals(FALSE, (bool) $config->get('false.boolean'));
+    $this->assertEquals(FALSE, (bool) $config->get('false.boolean', TRUE));
   }
 
   /**
@@ -66,12 +68,14 @@ class SkprConfigTest extends TestCase {
       'chip.shop' => 'snax',
       'somewhat.secret' => 'squirrel',
       'super.secret' => 'sssh',
+      'false.boolean' => 0,
     ], SkprConfig::create()->getAll(FALSE, $filename));
     $this->assertEquals([
       'FOO_BAR' => 'wiz',
       'CHIP_SHOP' => 'snax',
       'SOMEWHAT_SECRET' => 'squirrel',
       'SUPER_SECRET' => 'sssh',
+      'FALSE_BOOLEAN' => '0',
     ], SkprConfig::create()->getAll(TRUE, $filename));
     $this->assertEquals([], SkprConfig::create()->getAll(__DIR__ . '/../fixtures/does_not_exist'));
   }

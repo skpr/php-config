@@ -227,7 +227,7 @@ class SkprConfig {
    *   The config value or false if not found.
    */
   public function get(string $key, $fallback = FALSE) {
-    return !empty($this->config[$key]) ? $this->config[$key] : $fallback;
+    return array_key_exists($key, $this->config) ? $this->config[$key] : $fallback;
   }
 
   /**
