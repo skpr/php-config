@@ -1,0 +1,35 @@
+name: build
+
+on:
+  pull_request: ~
+  push:
+    branches: [ main ]
+
+permissions:
+  checks: write
+  pull-requests: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        version: [ 8.1, 8.2, 8.3 ]
+        prefer_lowest: [ "--prefer-lowest", "" ]
+    container:
+      image: skpr/php-cli:${{ matrix.version }}-v2-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          show-progress: false
+      - name: Composer Install
+        run: composer upgrade --prefer-dist --no-progress --no-interaction ${{ matrix.prefer_lowest }}
+      - name: 🧹 PHP CodeSniffer
+        run: ./bin/phpcs --report=checkstyle -q | ./bin/cs2pr
+      - name: ⚡ Run Unit Tests
+        run: ./bin/phpunit --log-junit $(pwd)/phpunit.xml
+      - name: 📝 Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: ./phpunit.xml
+          comment_mode: off

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Skpr\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
@@ -77,7 +79,7 @@ class SkprConfigTest extends TestCase {
       'SUPER_SECRET' => 'sssh',
       'FALSE_BOOLEAN' => '0',
     ], SkprConfig::create()->getAll(TRUE, $filename));
-    $this->assertEquals([], SkprConfig::create()->getAll(__DIR__ . '/../fixtures/does_not_exist'));
+    $this->assertEquals([], SkprConfig::create()->getAll(FALSE, __DIR__ . '/../fixtures/does_not_exist'));
   }
 
   /**
