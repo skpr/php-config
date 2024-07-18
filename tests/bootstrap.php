@@ -1,7 +1,5 @@
 <?php
 
-assert_options(ASSERT_ACTIVE, false);
-
 $autoloader = __DIR__ . '/../vendor/autoload.php';
 $loader = require $autoloader;
 
