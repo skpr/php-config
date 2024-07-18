@@ -19,6 +19,9 @@ jobs:
         prefer_lowest: [ "--prefer-lowest", "" ]
     container:
       image: skpr/php-cli:${{ matrix.version }}-v2-latest
+      options:
+        --pull always
+        --user root
     steps:
       - name: Checkout
         uses: actions/checkout@v4
