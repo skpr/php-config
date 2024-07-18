@@ -36,5 +36,6 @@ jobs:
       - name: 📝 Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
+          check_name: Test Results ${{ matrix.version }} ${{ matrix.prefer_lowest }}
           files: ./phpunit.xml
           comment_mode: off
