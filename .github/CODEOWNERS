@@ -1,0 +1,9 @@
+# Code owners for dependency manifests and lock files.
+# GitHub requests a review from the owners on any PR that changes these files,
+# including Dependabot updates. Primary maintainer first, then backup.
+
+# Composer
+/composer.json       @nickschuch @nterbogt
+
+# This file
+/.github/CODEOWNERS  @nickschuch @nterbogt
